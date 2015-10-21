@@ -1,0 +1,5 @@
+#/bin/bash
+
+CONTAINER_ID="ubuntu-node-test"
+
+docker build -t ${CONTAINER_ID} . && docker run -p 49160:8080 -d ${CONTAINER_ID}
