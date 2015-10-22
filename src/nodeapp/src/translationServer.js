@@ -1,32 +1,74 @@
 var express=require('express');
 var fs=require('fs');
-var https=require('https')
-var PORT=8080;
+var https=require('https');
+var path=require('path');
+var querystring=require('querystring');
+var PORT=8085;
+var Entities = require('html-entities').AllHtmlEntities;
 
 var app=express();
+var entities = new Entities();
 
-var translateWithGoogleScript=function(recievedText,recievedLangId,callbackFunc){
+var translateWithYandexApi=function(recievedText,recievedLangId,callbackFunc){
 		
-				
-		var gsLink="https://script.google.com/macros/s/AKfycbx7gnyltxcLM1so_8z8H9eZIG4FSp3SQ32aq37yQVc275DRLlJB/exec?"+"text="+recievedText+"&lang="+recievedLangId;
+		var yaApiKey='trnsl.1.1.20151022T191515Z.f9305089eb694ded.8e05f1eafd464aad94c9987638ee7c4dc33565d1';
+		var langDetectionLink='https://translate.yandex.net/api/v1.5/tr.json/detect?key='+yaApiKey+'&text='+recievedText;
+		
+		console.log("TEXT"+recievedText)
+		
+		function getTranslation(translationLink){
 			
-			console.log(gsLink);
-		
-		https.get(gsLink,function(resp){
-		
-			console.log(resp)
-		
+			 https.get(translationLink,function(resp){
+			
+			console.log("Translating...");
+			
 			resp.on('data',function(d) {
-				callbackFunc(d);
+				var parsedData=JSON.parse(d);
+				var result=parsedData.text;
+				
+				console.log(parsedData);
+				
+				if (parsedData.code == 200)
+				{
+				 callbackFunc(result[0]);
+				}
+				else
+				{
+				callbackFunc(parsedData.message);
+				}	            
+			});			
+		
+		}).on('error', function(e) { console.error(e);});
+		};
+		
+		https.get(langDetectionLink,function(resp){
+			
+			console.log("Detecting language...")
+			
+			console.log(langDetectionLink)
+			
+			resp.on('data',function(d) {
+				                 
+				var parsedDetData=JSON.parse(d);
+				
+				var detectedLang=parsedDetData.lang;				
+
+				console.log("Detected "+detectedLang);				
+
+				var langTranslationLink='https://translate.yandex.net/api/v1.5/tr.json/translate?key='+yaApiKey+'&lang='+detectedLang+'-'+recievedLangId+'&text='+recievedText;
+				console.log(langTranslationLink)
+				getTranslation(langTranslationLink);
+				
 				});			
 		
 		}).on('error', function(e) { console.error(e);});
+
 		
 };
 
 
 var loadstatpage = function (response,data) {
-fs.readFile('./web/stat.html', function (err, data) {
+fs.readFile(path.join(__dirname,'./web/stat.html'), function (err, data) {
     if (err) {
         throw err; 
     }
@@ -38,7 +80,7 @@ response.end();
 }
 
 var loadbootsrap=function(response,data) {
-fs.readFile('./web/css/bootstrap.min.css', function (err, data) {
+fs.readFile(path.join(__dirname,'./web/css/bootstrap.min.css'), function (err, data) {
     if (err) {
         throw err; 
     }
@@ -65,8 +107,8 @@ app.get('/app',function (req, res) {
 app.get('/translate',function (req, res) {
   	
 	var requestObject=req;
-	
-	translateWithGoogleScript(requestObject.query.text.toString(),requestObject.query.lang.toString(),function(resp){
+	console.log(entities.decode('&#1083;&#1086;&#1083;&#1086'));
+	translateWithYandexApi(entities.decode(requestObject.query.text.toString()),requestObject.query.lang,function(resp){
 	res.send(resp);
 	}); 
 	

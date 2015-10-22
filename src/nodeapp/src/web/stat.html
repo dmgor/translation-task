@@ -7,10 +7,16 @@
 	
 		function submitTranslation(){
 				
+				var host="localhost";
+				var PORT="8085";
+				
 				var text=document.getElementById('textInputField').value;
 				var lang=document.getElementById('langInputField').value;
-				console.log(text+" "+lang)
-				var translationlink="http://localhost:8080/translate?text="+text+"&lang="+lang;
+				
+				var translationlink="http://"+host+":"+PORT+"/translate?text="+text+"&lang="+lang;
+				
+				console.log(translationlink)
+				
 				sendTranslationRequest(translationlink,function(responseText){document.getElementById("translationResult").innerHTML=responseText;});
 		}
 		
