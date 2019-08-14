@@ -8,9 +8,11 @@ pipeline {
             sh 'curl https://repo.dev.wixpress.com/artifactory/generic/scripts/getLastScripts.sh | sh'
           }
         }
-        stage('Do something in docker') {
+        stage('Do something in parallel') {
           steps {
             echo 'I am a message'
+            sh '''sleep 15
+echo "Done"'''
           }
         }
       }
