@@ -1,5 +1,10 @@
 pipeline {
-  agent none
+  agent {
+    docker {
+      image 'node:latest'
+    }
+
+  }
   stages {
     stage('Prepare') {
       parallel {
@@ -16,7 +21,7 @@ sleep 10;
 echo "Done"'''
           }
         }
-        stage('Do something in parallel') {
+        stage('Check published version') {
           agent {
             docker {
               image 'alpine'
@@ -24,7 +29,7 @@ echo "Done"'''
 
           }
           steps {
-            sh '''echo "Doing more things in parallel"
+            sh '''echo "Checking for already published artifacts"
 sleep 15;
 echo "Done"'''
           }
@@ -32,16 +37,52 @@ echo "Done"'''
       }
     }
     stage('Build Node') {
-      agent {
-        docker {
-          image 'node:latest'
-        }
+      parallel {
+        stage('Build Node') {
+          agent {
+            docker {
+              image 'node:latest'
+            }
 
-      }
-      steps {
-        sh '''pwd ;
+          }
+          steps {
+            sh '''pwd ;
 ls -la ;'''
-        sh 'npm build ./src/nodeapp'
+            sh 'npm build ./src/nodeapp'
+          }
+        }
+        stage('npm test-1') {
+          agent {
+            docker {
+              image 'node:latest'
+            }
+
+          }
+          steps {
+            sh 'npm test ./src/nodeapp'
+          }
+        }
+        stage('npm test-2') {
+          agent {
+            docker {
+              image 'node:latest'
+            }
+
+          }
+          steps {
+            sh 'npm test ./src/nodeapp'
+          }
+        }
+        stage('npm test-3') {
+          steps {
+            sh 'npm test ./src/nodeapp'
+          }
+        }
+      }
+    }
+    stage('Docker build') {
+      steps {
+        sh 'docker build .'
       }
     }
   }
