@@ -74,6 +74,12 @@ ls -la ;'''
           }
         }
         stage('npm test-3') {
+          agent {
+            docker {
+              image 'node:latest'
+            }
+
+          }
           steps {
             sh 'npm test ./src/nodeapp'
           }
