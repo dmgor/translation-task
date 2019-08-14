@@ -89,7 +89,10 @@ ls -la ;'''
 
       }
       steps {
-        sh 'docker build .'
+        dir(path: './src/nodeapp') {
+          sh 'docker build .'
+        }
+
       }
     }
     stage('Publish artifacts') {
