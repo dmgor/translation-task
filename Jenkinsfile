@@ -39,7 +39,8 @@ echo "Done"'''
 
       }
       steps {
-        sh 'echo "Setup comes here"'
+        sh '''pwd ;
+ls -la ;'''
         sh 'npm build ./src/nodeapp'
       }
     }
