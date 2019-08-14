@@ -1,26 +1,43 @@
 pipeline {
   agent none
   stages {
-    stage('get scripts') {
+    stage('Prepare') {
       parallel {
         stage('get scripts') {
-          agent any
+          agent {
+            docker {
+              image 'alpine'
+            }
+
+          }
           steps {
-            sh 'curl https://repo.dev.wixpress.com/artifactory/generic/scripts/getLastScripts.sh | sh'
+            sh '''echo "Getting latest scripts...." ;
+sleep 10;
+echo "Done"'''
           }
         }
         stage('Do something in parallel') {
-          agent any
+          agent {
+            docker {
+              image 'alpine'
+            }
+
+          }
           steps {
-            echo 'I am a message'
-            sh '''sleep 15;
+            sh '''echo "Doing more things in parallel"
+sleep 15;
 echo "Done"'''
           }
         }
       }
     }
     stage('Build Node') {
-      agent any
+      agent {
+        docker {
+          image 'node:latest'
+        }
+
+      }
       steps {
         sh 'echo "Setup comes here"'
         sh 'npm build ./src/nodeapp'
