@@ -82,11 +82,23 @@ ls -la ;'''
       }
     }
     stage('Docker build') {
+      agent {
+        node {
+          label 'master'
+        }
+
+      }
       steps {
         sh 'docker build .'
       }
     }
     stage('Publish artifacts') {
+      agent {
+        node {
+          label 'master'
+        }
+
+      }
       steps {
         archiveArtifacts(artifacts: '*.js', fingerprint: true, onlyIfSuccessful: true)
       }
