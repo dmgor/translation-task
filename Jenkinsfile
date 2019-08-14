@@ -1,10 +1,5 @@
 pipeline {
-  agent {
-    docker {
-      image 'node:latest'
-    }
-
-  }
+  agent none
   stages {
     stage('Prepare') {
       parallel {
