@@ -9,12 +9,6 @@ pipeline {
           }
         }
         stage('Do something in docker') {
-          agent {
-            docker {
-              image 'alpine'
-            }
-
-          }
           steps {
             echo 'I am a message'
           }
