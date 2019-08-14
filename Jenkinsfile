@@ -10,6 +10,7 @@ pipeline {
           }
         }
         stage('Do something in parallel') {
+          agent any
           steps {
             echo 'I am a message'
             sh '''sleep 15;
