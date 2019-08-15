@@ -79,6 +79,17 @@ ls -la ;'''
             sh 'echo npm test ./src/nodeapp'
           }
         }
+        stage('npm test-4') {
+          agent {
+            docker {
+              image 'node:latest'
+            }
+
+          }
+          steps {
+            sh 'echo npm test ./src/nodeapp'
+          }
+        }
       }
     }
     stage('Docker build') {
@@ -90,7 +101,7 @@ ls -la ;'''
       }
       steps {
         dir(path: './src/nodeapp') {
-          sh 'docker build .'
+          sh 'echo docker build .'
         }
 
       }
