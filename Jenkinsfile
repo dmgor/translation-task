@@ -103,7 +103,7 @@ ls -la ;'''
 
       }
       steps {
-        archiveArtifacts(artifacts: '*.js', fingerprint: true, onlyIfSuccessful: true)
+        archiveArtifacts(artifacts: 'src/nodeapp/src/*.js', fingerprint: true, onlyIfSuccessful: true)
       }
     }
   }
