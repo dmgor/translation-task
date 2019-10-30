@@ -3,7 +3,7 @@
   "description": "Node.js simple translation app server",
   "author": "Dmytro Gordienko <dmgor500@gmail.com>",
   "dependencies": {
-    "express": "3.2.4",
+    "express": "4.17.1",
    "html-entities":"1.2.0"
   }
 }
